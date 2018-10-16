@@ -5,6 +5,14 @@ Spectrum is a simple HTML5 audio player. It is written in HTML and vanilla JavaS
 ![screenshot_3](https://user-images.githubusercontent.com/7956606/47041765-fd962380-d189-11e8-9077-438473d71f85.png)
 
 
+
+
+## Demo
+
+[Demo Page](https://haeri.github.io/Spectrum-Player/)
+
+
+
 ## Usage
 
 1. Include the `style.css` or `style.min.css`into the html header document to style the player.  
