@@ -1,5 +1,5 @@
 /***
-*   Spectrum-Player v1.0.0 by Haeri 2018
+*   Spectrum-Player v1.0.1 by Haeri 2018
 ***/
 
 class SpectrumPlayer
