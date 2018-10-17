@@ -1,35 +1,32 @@
 /***
-*   Spectrum-Player v1.0.1 by Haeri 2018
-***/
-
-class SpectrumPlayer
-{
-    constructor(element)
-    {   
+ *   Spectrum-Player v1.0.2 by Haeri 2018
+ ***/
+class SpectrumPlayer {
+    constructor(element) {
         this.player = element;
         this._createPlayerHTML();
 
         // Audio player
-        this.audio  = element.querySelector('audio#player-audio');
+        this.audio = element.querySelector('audio#player-audio');
         this.source = element.querySelector('source#player-source');
 
         // UI elements
-        this.ui_timelineBar     = element.querySelector('.player-timeline');
-        this.ui_timelineHead    = element.querySelector('.player-timeline .playhead');
-        this.ui_timelineBuffer  = element.querySelector('.player-timeline .buffer');
-        this.ui_volumeBar       = element.querySelector('[data-control="volume"]');
-        this.ui_volumeKnob      = element.querySelector('[data-control="volume"] .volume-knob')
-        this.ui_Timer           = element.querySelector('.player-timer');
-        this.ui_playPauseBtn    = element.querySelector('[data-control="playpause"]');
-        this.ui_nextBtn         = element.querySelector('[data-control="next"]');
-        this.ui_muteUnmuteBtn   = element.querySelector('[data-control="muteunmute"]');
+        this.ui_timelineBar = element.querySelector('.player-timeline');
+        this.ui_timelineHead = element.querySelector('.player-timeline .playhead');
+        this.ui_timelineBuffer = element.querySelector('.player-timeline .buffer');
+        this.ui_volumeBar = element.querySelector('[data-control="volume"]');
+        this.ui_volumeKnob = element.querySelector('[data-control="volume"] .volume-knob')
+        this.ui_Timer = element.querySelector('.player-timer');
+        this.ui_playPauseBtn = element.querySelector('[data-control="playpause"]');
+        this.ui_nextBtn = element.querySelector('[data-control="next"]');
+        this.ui_muteUnmuteBtn = element.querySelector('[data-control="muteunmute"]');
         this.ui_currentSong;
 
         // Player variables
-        this.currentIndex   = 0;
-        this.isPlaying      = false;
-        this.isMuted        = false;
-        this.playList       = [];
+        this.currentIndex = 0;
+        this.isPlaying = false;
+        this.isMuted = false;
+        this.playList = [];
 
         // Player Settings
         this.volume;
@@ -37,42 +34,50 @@ class SpectrumPlayer
         this.shouldPlayNext;
         this.connectedPlayer;
 
+        // Custom events
+        this.eventMap = {};
+
         // Initialize
         this._adoptSettings();
         this._initPlaylist();
+        this._createSongTitles();
         this._registerAllListeners();
 
         // Ready first song
         this.playSong(0, false);
     }
 
+
+
+
+    /* ---------------- Public Methods ---------------- */
+
     // Play the current player
-    play()
-    {
+    play() {
         this.audio.play();
         this.isPlaying = true;
         this.ui_playPauseBtn.querySelector('.symbol').classList.add('fa-pause');
         this.ui_playPauseBtn.querySelector('.symbol').classList.remove('fa-play');
         document.title = "\u266B" + "  " + this.playList[this.currentIndex].artist + " - " + this.playList[this.currentIndex].title;
+
+        this._dispatchEvent("onplay", this.playList[this.currentIndex]);
     }
 
     // Play a selected song with by index from the playlist,
     // and specify if song should start playing or just queue up
-    playSong(index, shouldPlay = true)
-    {
-        if(index < 0 || index >= this.playList.length){
+    playSong(index, shouldPlay = true) {
+        if (index < 0 || index >= this.playList.length) {
             console.log("Index out of bounds!");
             return;
         }
 
-        if(this.connectedPlayer){
-            spectrumPlayers.forEach(function(item, index){
-                if(item.connectedPlayer && item.isPlaying && item != this){
+        if (this.connectedPlayer) {
+            spectrumPlayers.forEach(function(item, index) {
+                if (item.connectedPlayer && item.isPlaying && item != this) {
                     item.pause();
                 }
             });
         }
-        
 
         this.currentIndex = index;
         this.source.src = this.playList[index].src;
@@ -81,35 +86,34 @@ class SpectrumPlayer
         this.audio.muted = this.isMuted;
         this.audio.load();
         this._highlightSong(index);
+        this._dispatchEvent("onsongchange", this.playList[this.currentIndex]);
 
         if (shouldPlay) this.play();
     }
 
     // Play next song
-    playNext()
-    {
+    playNext() {
         this.playSong((this.currentIndex + 1) % (this.playList.length));
     }
 
     // Play previous song
-    playPrev()
-    {
-        this.playSong((this.currentIndex - 1) % (this.playList.length));   
+    playPrev() {
+        this.playSong((this.currentIndex - 1) % (this.playList.length));
     }
 
     // Pause the current player
-    pause()
-    {
+    pause() {
         this.audio.pause();
         this.isPlaying = false;
         this.ui_playPauseBtn.querySelector('.symbol').classList.add('fa-play');
         this.ui_playPauseBtn.querySelector('.symbol').classList.remove('fa-pause');
         document.title = originalPageTitle;
+
+        this._dispatchEvent("onpause", this.playList[this.currentIndex]);
     }
 
     // Mute the player
-    mute()
-    {
+    mute() {
         this.audio.muted = true;
         this.isMuted = true;
         this.ui_muteUnmuteBtn.querySelector('.symbol').classList.add('fa-volume-mute');
@@ -117,8 +121,7 @@ class SpectrumPlayer
     }
 
     // Unmute the player
-    unmute()
-    {
+    unmute() {
         this.audio.muted = false;
         this.isMuted = false;
         this.ui_muteUnmuteBtn.querySelector('.symbol').classList.add('fa-volume-up');
@@ -126,8 +129,7 @@ class SpectrumPlayer
     }
 
     // Set desired volume for the player
-    setVolume(percent)
-    {
+    setVolume(percent) {
         percent = this._clamp(percent, 0, 1);
 
         this.unmute();
@@ -137,10 +139,42 @@ class SpectrumPlayer
         this.ui_volumeKnob.style.width = percent * 100 + "%";
     }
 
+    // Add cunstom functions to certain events
+    addEventListener(name, func) {
+        if (!(name in this.eventMap)) {
+            this.eventMap[name] = new Array();
+        }
+        this.eventMap[name].push(func);
+    }
+
+    // Remove cunstom functions to certain events
+    removeEventListener(name, func) {
+        if (name in this.eventMap) {
+            var arr = this.eventMap[name];
+            if (arr === undefined) return;
+
+            var index = arr.indexOf(func);
+            if (index !== -1) arr.splice(index, 1);
+            this.eventMap[name] = arr;
+        }
+    }
+
+
+
+    /* ---------------- Private Methods ---------------- */
+
+    // Execute custom function for the appropriate event
+    _dispatchEvent(name, data) {
+        var arr = this.eventMap[name];
+        if (arr === undefined) return;
+
+        for (var i = 0; i < arr.length; i++) {
+            arr[i](data);
+        }
+    }
 
     // Get settings from html and set them
-    _adoptSettings()
-    {
+    _adoptSettings() {
         this.connectedPlayer = this._getData(this.player, "connected", true);
         this.volume = this._getData(this.player, "volume", 0.75);
         this.shouldLoopSet = this._getData(this.player, "loopSet", false);
@@ -149,10 +183,8 @@ class SpectrumPlayer
         this.setVolume(this.volume);
     }
 
-
     // Register all listeners to the necessary elements
-    _registerAllListeners()
-    {
+    _registerAllListeners() {
         var self = this;
 
         // Register play/pause controll
@@ -167,47 +199,52 @@ class SpectrumPlayer
         });
 
         // Register playhead controll
-        this.ui_timelineBar.addEventListener('mousedown', function() {
-            document.addEventListener('mousemove', playheadChange);
-            document.addEventListener('mouseup', function onUp(e) {
-                playheadChange(e);
-   
-                document.removeEventListener('mouseup', onUp);
-                document.removeEventListener('mousemove', playheadChange);
-            });
+        this.ui_timelineBar.addEventListener('mousedown', function(e) {
+            // Only react to left clicks
+            if (e.which == 1) {
+                document.addEventListener('mousemove', playheadChange);
+                document.addEventListener('mouseup', function onUp(e) {
+                    playheadChange(e);
 
-            function playheadChange(e){
-                var percent = e.offsetX / self.ui_timelineBar.offsetWidth;
-                self.audio.currentTime = percent * self.audio.duration;
-                self.ui_timelineHead.style.width = percent * 100 + "%";
+                    document.removeEventListener('mouseup', onUp);
+                    document.removeEventListener('mousemove', playheadChange);
+                });
+
+                function playheadChange(e) {
+                    var percent = e.offsetX / self.ui_timelineBar.offsetWidth;
+                    self.audio.currentTime = percent * self.audio.duration;
+                    self.ui_timelineHead.style.width = percent * 100 + "%";
+                }
             }
         });
 
-
         // Register mouse scroll volume controll
-        this.ui_volumeBar.addEventListener('mouseenter', function(e){
-            window.onwheel = function(e){
+        this.ui_volumeBar.addEventListener('mouseenter', function(e) {
+            window.onwheel = function(e) {
                 e.preventDefault();
                 var percent = (self.volume + (0.02 * Math.sign(e.deltaY)));
                 self.setVolume(percent);
             }
         });
-        this.ui_volumeBar.addEventListener('mouseleave', function(e){
+        this.ui_volumeBar.addEventListener('mouseleave', function(e) {
             window.onwheel = null;
         });
 
         // Register mouse click and drag volume controll
-        this.ui_volumeBar.addEventListener('mousedown', function() {
-            document.addEventListener('mousemove', volumeChange);
-            document.addEventListener('mouseup', function onUp(e) {
-                volumeChange(e);
-                document.removeEventListener('mouseup', onUp);
-                document.removeEventListener('mousemove', volumeChange);
-            });
+        this.ui_volumeBar.addEventListener('mousedown', function(e) {
+            // Only react to left clicks
+            if (e.which == 1) {
+                document.addEventListener('mousemove', volumeChange);
+                document.addEventListener('mouseup', function onUp(e) {
+                    volumeChange(e);
+                    document.removeEventListener('mouseup', onUp);
+                    document.removeEventListener('mousemove', volumeChange);
+                });
 
-            function volumeChange(e){
-                var percent = e.offsetX / self.ui_volumeBar.offsetWidth;
-                self.setVolume(percent);
+                function volumeChange(e) {
+                    var percent = e.offsetX / self.ui_volumeBar.offsetWidth;
+                    self.setVolume(percent);
+                }
             }
         });
 
@@ -237,7 +274,6 @@ class SpectrumPlayer
             self.playNext();
             return false;
         });
-        
 
         // Register player head to follow the song progress
         this.audio.addEventListener('timeupdate', function() {
@@ -254,15 +290,15 @@ class SpectrumPlayer
         });
 
         // Register to play next song when current one is finished
-        this.audio.addEventListener('ended', function(){
-            if(!self.shouldPlayNext) {
+        this.audio.addEventListener('ended', function() {
+            if (!self.shouldPlayNext) {
                 self.pause();
                 return;
             }
             if (self.currentIndex == self.playList.length - 1) {
-                if(self.shouldLoopSet){
+                if (self.shouldLoopSet) {
                     self.playSong(0);
-                }else{
+                } else {
                     self.pause();
                 }
             } else {
@@ -271,7 +307,7 @@ class SpectrumPlayer
         });
 
         // Register buffer to update
-        this.audio.addEventListener('progress', function bufferUpdate(){
+        this.audio.addEventListener('progress', function bufferUpdate() {
             var percent = '0%';
             var buf = self.audio.buffered;
             try {
@@ -295,61 +331,67 @@ class SpectrumPlayer
         this.ui_currentSong = this.playList[index].element;
         this.ui_currentSong.classList.add('active');
     }
-   
+
     // Generate the player html
-    _createPlayerHTML()
-    {
-        this.player.insertAdjacentHTML('afterbegin',    
-            '<div class="player-header">'+
-                '<audio id="player-audio" class="hidden-audio" preload="none">'+
-                    '<source id="player-source"></source>'+
-                '</audio>'+
-                '<div class="player-controlls">'+
-                    '<a href="#" class="player-control" data-control="playpause">'+
-                        '<i class="symbol fas fa-play"></i>'+
-                    '</a>'+
-                    '<a href="#" class="player-control" data-control="next">'+
-                        '<i class="fas fa-step-forward"></i>'+
-                    '</a>'+
-                    '<span class="player-timer player-control">00:00 / 00:00</span>'+
-                    '<a href="#" class="player-control" data-control="muteunmute">'+
-                        '<i class="symbol fas fa-volume-up"></i>'+
-                    '</a>'+
-                    '<div class="player-control player-volume" data-control="volume">'+
-                        '<div class="bar-back"></div>'+
-                        '<div class="volume-knob"></div>'+
-                    '</div>'+
-                '</div>'+
-            '</div>'+
-            '<div class="player-timeline">'+
-                '<div class="bar-back"></div>'+
-                '<div class="buffer"></div>'+
-                '<div class="playhead"></div>'+
+    _createPlayerHTML() {
+        this.player.insertAdjacentHTML('afterbegin',
+            '<div class="player-header">' +
+            '<audio id="player-audio" class="hidden-audio" preload="none">' +
+            '<source id="player-source"></source>' +
+            '</audio>' +
+            '<div class="player-controlls">' +
+            '<a href="#" class="player-control" data-control="playpause">' +
+            '<i class="symbol fas fa-play"></i>' +
+            '</a>' +
+            '<a href="#" class="player-control" data-control="next">' +
+            '<i class="fas fa-step-forward"></i>' +
+            '</a>' +
+            '<span class="player-timer player-control">00:00 / 00:00</span>' +
+            '<a href="#" class="player-control" data-control="muteunmute">' +
+            '<i class="symbol fas fa-volume-up"></i>' +
+            '</a>' +
+            '<div class="player-control player-volume" data-control="volume">' +
+            '<div class="bar-back"></div>' +
+            '<div class="volume-knob"></div>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="player-timeline">' +
+            '<div class="bar-back"></div>' +
+            '<div class="buffer"></div>' +
+            '<div class="playhead"></div>' +
             '</div>'
         );
     }
 
+    // Fill ancker tags with song infos
+    _createSongTitles() {
+        for (var i = 0; i < this.playList.length; i++) {
+            this.playList[i].element.innerHTML = this.playList[i].artist + " - " + this.playList[i].title;
+        }
+    }
+
     // Create the playlist object from the elements in DOM
-    _initPlaylist(){
+    _initPlaylist() {
         var arr = this.player.querySelectorAll('.player-body ol li a');
-        for(var i = 0; i < arr.length; i++){
+        for (var i = 0; i < arr.length; i++) {
             this.playList.push({
                 index: i,
                 element: arr[i],
                 title: arr[i].dataset.title,
                 artist: arr[i].dataset.artist,
                 src: arr[i].dataset.src,
+                img: arr[i].dataset.img,
             });
         };
     }
 
     // Get parsed data attribute from element
-    _getData(element, name, def)
-    {
+    _getData(element, name, def) {
         var tmp = element.dataset[name];
-        if(tmp === undefined) return def;       // return default if not set
-        if(tmp === "") return true;             // return true if only attibute is set
-        return JSON.parse(tmp);                 // Parse to type
+        if (tmp === undefined) return def; // return default if not set
+        if (tmp === "") return true; // return true if only attibute is set
+        return JSON.parse(tmp); // Parse to type
     }
 
     // Clamp a value from min to max
@@ -380,8 +422,8 @@ class SpectrumPlayer
 
 function initSpectrumPlayers() {
     var players = document.querySelectorAll('.spectrum-player');
-    for(var i = 0; i < players.length; i++){
-        if(players[i].initialized === undefined){
+    for (var i = 0; i < players.length; i++) {
+        if (players[i].initialized === undefined) {
             spectrumPlayers.push(new SpectrumPlayer(players[i]));
             players[i].initialized = true;
         }

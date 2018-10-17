@@ -1,3 +1,7 @@
+*{
+	font-family: 'Roboto', sans-serif;
+}
+
 .bg-wrapper{
 	position: absolute;
     top: 0;
@@ -16,11 +20,16 @@
 }
 
 .bg {
-    background-image: url(res/bg.jpg);
+    background-image: url(res/album/i1.jpg);
     background-size: cover;
     background-position: center center;
     filter: blur(15px);
     transform: scale(1.1);
+    transition: 1s;
+}
+
+.bg.zoom{
+	transform: scale(1.2);
 }
 
 .tint{
@@ -29,7 +38,8 @@
 
 .spectrum-player{
 	position: absolute;
-	width: 500px;
+	min-width: 340px;
+	max-width: 500px;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);

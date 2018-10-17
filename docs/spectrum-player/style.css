@@ -1,15 +1,18 @@
-/* CUSTOM AUDIO PLAYER */
+/* GENERAL */
+
 .spectrum-player{
-	font-family: sans-serif;
+  font-family: sans-serif;
 }
 
 .spectrum-player a{
-	color: #7a7a7a;
-	transition: 0.3s;
+  color: #7a7a7a;
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
 }
 
 .spectrum-player a:hover{
-	color: #232323;
+  color: #232323;
   cursor: pointer;
 }
 
@@ -30,13 +33,13 @@
 }
 
 .spectrum-player .player-header [data-control="playpause"] {
-    width: 18px;
-    margin-right: 8px;
+  width: 18px;
+  margin-right: 8px;
 }
 
 .spectrum-player .player-header [data-control="muteunmute"] {
-    width: 16px;
-    margin-right: 10px;
+  width: 16px;
+  margin-right: 10px;
 }
 
 .spectrum-player .player-header span.player-timer {
@@ -50,11 +53,15 @@
 
 .spectrum-player .player-header .player-volume .volume-knob{
   background: #c8c8c8;
+  -webkit-transition: width 0.1s, background 0.3s;
+  -o-transition: width 0.1s, background 0.3s;
+  transition: width 0.1s, background 0.3s;
 }
 
 .spectrum-player .player-header .player-volume:hover .volume-knob{
   background: #3F5EFB;
 }
+
 
 
 /* BODY */
@@ -105,7 +112,8 @@
   padding: 5px 0px;
   position: relative;
   overflow: hidden;
-  box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+          box-sizing: content-box;
   cursor: pointer;
 }
 
@@ -126,15 +134,22 @@
 
 .spectrum-player .player-timeline .playhead{
   overflow: visible;
+  -webkit-transition: 0.1s;
+  -o-transition: 0.1s;
   transition: 0.1s;
 
   background: #3F5EFB;  /* fallback for old browsers */
   background: -webkit-linear-gradient(to right, #3F5EFB, #FC466B);  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-gradient(linear, left top, right top, from(#3F5EFB), to(#FC466B));
+  background: -webkit-linear-gradient(left, #3F5EFB, #FC466B);
+  background: -o-linear-gradient(left, #3F5EFB, #FC466B);
   background: linear-gradient(to right, #3F5EFB, #FC466B); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
 .spectrum-player .player-timeline .buffer{
   background: #c8c8c8;
+  -webkit-transition: 0.3s;
+  -o-transition: 0.3s;
   transition: 0.3s;
 }
 
@@ -146,13 +161,17 @@
   height: 100%;
   background: white;
   right: 0px;
+  -webkit-transition: 0.2s;
+  -o-transition: 0.2s;
   transition: 0.2s;
-  box-shadow: 0px 0px 0px 0px #ffffff9c;
+  -webkit-box-shadow: 0px 0px 0px 0px #ffffff9c;
+          box-shadow: 0px 0px 0px 0px #ffffff9c;
 }
 
 .spectrum-player .player-timeline:hover .playhead:after,
 .spectrum-player .player-volume:hover .volume-knob:after{
   width: 8px;
   right: -4px;
-  box-shadow: 0px 0px 4px 1px #ffffff9c;
+  -webkit-box-shadow: 0px 0px 4px 1px #ffffff9c;
+          box-shadow: 0px 0px 4px 1px #ffffff9c;
 }

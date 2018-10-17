@@ -3,9 +3,13 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Spectrum Player</title>
-		<link href="spectrum-player/min/style.min.css" rel="stylesheet">
-		<link href="style.css" rel="stylesheet">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+		<link href="spectrum-player/style.css" rel="stylesheet">
+		<link href="style.css" rel="stylesheet">
+		
 	</head>
 	<body>
 
@@ -14,44 +18,60 @@
 			<div class="tint"></div>
 		</div>
 
-		<div class="spectrum-player">
+		<div class="spectrum-player" data-loop-set="true">
 		  <div class="player-body">
 		    <ol>
 		
 		      <li>
-		        <a class="song-item" data-src="res/James Blake - I Need A Forest Fire (kordz edit).mp3" data-artist="James Blake" data-title="I Need A Forest Fire">
-		        	James Blake - I Need A Forest Fire (kordz edit)
-		        </a>
+		        <a class="song-item" data-artist="James Blake" data-title="I Need A Forest Fire" data-src="res/James Blake - I Need A Forest Fire (kordz edit).mp3" data-img="res/album/i1.jpg"></a>
 		      </li>
 		
 		      <li>
-		        <a class="song-item" data-title="Accept & Connect" data-artist="kordz" data-src="res/kordz - Accept & Connect (feat. Lontalius).mp3">
-		        	kordz - Accept & Connect (feat. Lontalius)
-		        </a>
+		        <a class="song-item" data-title="Accept & Connect" data-artist="kordz" data-src="res/kordz - Accept & Connect (feat. Lontalius).mp3" data-img="res/album/i2.jpg"></a>
 		      </li>
 
 		       <li>
-		        <a class="song-item" data-title="Up Above" data-artist="Pyrosion" data-src="res/Up Above.wav">
-		        	Pyrosion - Up Above
-		        </a>
+		        <a class="song-item" data-title="Up Above" data-artist="Pyrosion" data-src="res/Up Above.wav" data-img="res/album/i3.jpg"></a>
 		      </li>
 
 		       <li>
-		        <a class="song-item" data-title="Deep Blue" data-artist="Pold" data-src="res/Pold - Deep Blue.wav">
-		        	Pold - Deep Blue
-		        </a>
+		        <a class="song-item" data-title="Deep Blue" data-artist="Pold" data-src="res/Pold - Deep Blue.wav" data-img="res/album/i4.jpg"></a>
 		      </li>
 
 		       <li>
-		        <a class="song-item" data-title="Rock Angel" data-artist="Joakim Karud" data-src="res/Rock Angel.mp3">
-		        	Joakim Karud - Rock Angel
-		        </a>
+		        <a class="song-item" data-title="Rock Angel" data-artist="Joakim Karud" data-src="res/Rock Angel.mp3" data-img="res/album/i5.jpg"></a>
 		      </li>
 		
 		    </ol>
 		  </div>
 		</div>
 
-		<script src="spectrum-player/min/spectrum-player.min.js"></script>
+		<script src="spectrum-player/spectrum-player.js"></script>
+		<script type="text/javascript">
+			window.addEventListener('load', function() {
+				
+				spectrumPlayers[0].addEventListener('onplay', function(e){
+					document.querySelector('.bg').classList.add('zoom');
+				});
+
+				spectrumPlayers[0].addEventListener('onpause', function(e){
+					document.querySelector('.bg').classList.remove('zoom');
+				});
+
+				spectrumPlayers[0].addEventListener('onsongchange', function(e){
+					document.querySelector('.bg').style.backgroundImage = "url('" + e.img +"')";
+				});
+
+				document.body.onkeyup = function(e){
+					if(e.keyCode == 32){
+						if(spectrumPlayers[0].isPlaying)
+							spectrumPlayers[0].pause();
+						else
+							spectrumPlayers[0].play();
+					}
+				}
+
+			});
+		</script>
 	</body>
 </html>

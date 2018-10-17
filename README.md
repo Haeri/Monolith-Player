@@ -29,8 +29,11 @@ Spectrum is a simple HTML5 audio player. It is written in HTML and vanilla JavaS
   <div class="player-body">
     <ol>
       <li>
-        <a class="song-item" data-src="[AUDIO_SOURCE]" data-artist="[ARTIST_NAME]" data-title="[SONG_TITLE]">
-          [SONG_TITLE]
+        <a 	class="song-item" 
+	        data-src="[AUDIO_SOURCE]" 
+	        data-artist="[ARTIST_NAME]" 
+	        data-title="[SONG_TITLE]" 
+	        data-img="[OPTIONAL_ALBUM_ARTWORK]">
         </a>
       </li>
     </ol>
@@ -56,11 +59,25 @@ Following are the possible attributes:
 | `play-next` | true | Play next specifies if the player should automatically play the next song when the previous one has ended. |
 
 
+## Advanced Usage
+
+If a spectrum player needs to be initialized after the window has already loaded, the function `initSpectrumPlayers()` can be invoked to initialized all remaining uninitialized players. This can be especially handy, if the spectrum player was loaded asynchronously via AJAX.
+
+Spectrum player offers integration for custom JavaScript events:
+
+| Event | Description |
+| --- | --- |
+| `onplay` | This event is dispatched whenever the player starts playing an audio track |
+| `onpause` | This event is dispatched whenever the player pauses playing an audio track |
+| `onsongchange` | This event is dispatched whenever the player changes the audio track |
+
+Custom functions can be registered by calling for example  
+`spectrum.addEventListener('onplay', function(e) { console.log(e); });`
+
+
 
 ## TODO
 
 - Use own SVG for icons to eliminate font-awesome
 - Give a possibility to set accent color through data-attribute
-- Auto fill a tag content with song info from data attributes
 - Visualize when audio is buffering
-- Maybe some callbacks so that cool animations can be created
