@@ -63,6 +63,18 @@
 }
 
 
+.spectrum-player .player-controlls .spinner{
+  color: #c1c1c1;
+  padding: 2px 0px;
+  float: right;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.spectrum-player .player-header .spinner.show{
+  opacity: 1;
+}
+
 
 /* BODY */
 
@@ -112,9 +124,14 @@
   padding: 5px 0px;
   position: relative;
   overflow: hidden;
-  -webkit-box-sizing: content-box;
-          box-sizing: content-box;
   cursor: pointer;
+
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;   /* Chrome/Safari/Opera */
+  -khtml-user-select: none;    /* Konqueror */
+  -moz-user-select: none;      /* Firefox */
+  -ms-user-select: none;       /* Internet Explorer/Edge*/
+  user-select: none;  
 }
 
 .spectrum-player .bar-back{
@@ -158,9 +175,11 @@
   position: absolute;
   content: "";
   width: 1px;
-  height: 100%;
   background: white;
   right: 0px;
+  top: -2px;
+  height: 5px;
+  border-radius: 0%;
   -webkit-transition: 0.2s;
   -o-transition: 0.2s;
   transition: 0.2s;
@@ -170,8 +189,12 @@
 
 .spectrum-player .player-timeline:hover .playhead:after,
 .spectrum-player .player-volume:hover .volume-knob:after{
-  width: 8px;
-  right: -4px;
+  width: 5px;
+  height: 5px;
+  right: -2px;
+  top: -2px;
+  border-radius: 100%;
+
   -webkit-box-shadow: 0px 0px 4px 1px #ffffff9c;
           box-shadow: 0px 0px 4px 1px #ffffff9c;
 }

@@ -80,4 +80,4 @@ Custom functions can be registered by calling for example
 
 - Use own SVG for icons to eliminate font-awesome
 - Give a possibility to set accent color through data-attribute
-- Visualize when audio is buffering
+- Audio spectrum?

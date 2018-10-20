@@ -18,32 +18,35 @@
 			<div class="tint"></div>
 		</div>
 
-		<div class="spectrum-player" data-loop-set="true">
-		  <div class="player-body">
-		    <ol>
-		
-		      <li>
-		        <a class="song-item" data-artist="James Blake" data-title="I Need A Forest Fire" data-src="res/James Blake - I Need A Forest Fire (kordz edit).mp3" data-img="res/album/i1.jpg"></a>
-		      </li>
-		
-		      <li>
-		        <a class="song-item" data-title="Accept & Connect" data-artist="kordz" data-src="res/kordz - Accept & Connect (feat. Lontalius).mp3" data-img="res/album/i2.jpg"></a>
-		      </li>
+		<div class="spectrum-wrapper">
+			<div class="album-wrapper"></div>
+			<div class="spectrum-player" data-loop-set="true">
+			  <div class="player-body">
+			    <ol>
+			
+			      <li>
+			        <a class="song-item" data-artist="James Blake" data-title="I Need A Forest Fire" data-src="res/Rock Angel.mp3" data-img="res/album/i1.jpg"></a>
+			      </li>
+			
+			      <li>
+			        <a class="song-item" data-title="Accept & Connect" data-artist="kordz" data-src="res/kordz - Accept & Connect (feat. Lontalius).mp3" data-img="res/album/i2.jpg"></a>
+			      </li>
 
-		       <li>
-		        <a class="song-item" data-title="Up Above" data-artist="Pyrosion" data-src="res/Up Above.wav" data-img="res/album/i3.jpg"></a>
-		      </li>
+			       <li>
+			        <a class="song-item" data-title="Up Above" data-artist="Pyrosion" data-src="res/Up Above.wav" data-img="res/album/i3.jpg"></a>
+			      </li>
 
-		       <li>
-		        <a class="song-item" data-title="Deep Blue" data-artist="Pold" data-src="res/Pold - Deep Blue.wav" data-img="res/album/i4.jpg"></a>
-		      </li>
+			       <li>
+			        <a class="song-item" data-title="Deep Blue" data-artist="Pold" data-src="res/Pold - Deep Blue.wav" data-img="res/album/i4.jpg"></a>
+			      </li>
 
-		       <li>
-		        <a class="song-item" data-title="Rock Angel" data-artist="Joakim Karud" data-src="res/Rock Angel.mp3" data-img="res/album/i5.jpg"></a>
-		      </li>
-		
-		    </ol>
-		  </div>
+			       <li>
+			        <a class="song-item" data-title="Rock Angel" data-artist="Joakim Karud" data-src="res/Rock Angel.mp3" data-img="res/album/i5.jpg"></a>
+			      </li>
+			
+			    </ol>
+			  </div>
+			</div>
 		</div>
 
 		<script src="spectrum-player/spectrum-player.js"></script>
@@ -60,6 +63,7 @@
 
 				spectrumPlayers[0].addEventListener('onsongchange', function(e){
 					document.querySelector('.bg').style.backgroundImage = "url('" + e.img +"')";
+					document.querySelector('.album-wrapper').style.backgroundImage = "url('" + e.img +"')";
 				});
 
 				document.body.onkeyup = function(e){

@@ -1,8 +1,11 @@
 /***
- *   Spectrum-Player v1.0.2 by Haeri 2018
+ *   Spectrum-Player by Haeri 2018
  ***/
+
 class SpectrumPlayer {
     constructor(element) {
+        this.version = "1.0.3";
+
         this.player = element;
         this._createPlayerHTML();
 
@@ -17,6 +20,7 @@ class SpectrumPlayer {
         this.ui_volumeBar = element.querySelector('[data-control="volume"]');
         this.ui_volumeKnob = element.querySelector('[data-control="volume"] .volume-knob')
         this.ui_Timer = element.querySelector('.player-timer');
+        this.ui_spinner = element.querySelector('.player-controlls .spinner');
         this.ui_playPauseBtn = element.querySelector('[data-control="playpause"]');
         this.ui_nextBtn = element.querySelector('[data-control="next"]');
         this.ui_muteUnmuteBtn = element.querySelector('[data-control="muteunmute"]');
@@ -35,7 +39,10 @@ class SpectrumPlayer {
         this.connectedPlayer;
 
         // Custom events
-        this.eventMap = {};
+        this._eventMap = {};
+        this._isScrubbing = false;
+        this._isBuffering = false;
+
 
         // Initialize
         this._adoptSettings();
@@ -84,9 +91,12 @@ class SpectrumPlayer {
         this.audio.currentTime = 0;
         this.audio.volume = this.volume;
         this.audio.muted = this.isMuted;
+        this.ui_timelineBuffer.style.width = "0%";
+
         this.audio.load();
         this._highlightSong(index);
         this._dispatchEvent("onsongchange", this.playList[this.currentIndex]);
+
 
         if (shouldPlay) this.play();
     }
@@ -141,22 +151,29 @@ class SpectrumPlayer {
 
     // Add cunstom functions to certain events
     addEventListener(name, func) {
-        if (!(name in this.eventMap)) {
-            this.eventMap[name] = new Array();
+        if (!(name in this._eventMap)) {
+            this._eventMap[name] = new Array();
         }
-        this.eventMap[name].push(func);
+        this._eventMap[name].push(func);
     }
 
     // Remove cunstom functions to certain events
     removeEventListener(name, func) {
-        if (name in this.eventMap) {
-            var arr = this.eventMap[name];
+        if (name in this._eventMap) {
+            var arr = this._eventMap[name];
             if (arr === undefined) return;
 
             var index = arr.indexOf(func);
             if (index !== -1) arr.splice(index, 1);
-            this.eventMap[name] = arr;
+            this._eventMap[name] = arr;
         }
+    }
+
+    buffer(shouldBuffer){
+        if(shouldBuffer)
+            this.ui_spinner.classList.add("show");
+        else
+            this.ui_spinner.classList.remove("show");
     }
 
 
@@ -165,7 +182,7 @@ class SpectrumPlayer {
 
     // Execute custom function for the appropriate event
     _dispatchEvent(name, data) {
-        var arr = this.eventMap[name];
+        var arr = this._eventMap[name];
         if (arr === undefined) return;
 
         for (var i = 0; i < arr.length; i++) {
@@ -202,18 +219,33 @@ class SpectrumPlayer {
         this.ui_timelineBar.addEventListener('mousedown', function(e) {
             // Only react to left clicks
             if (e.which == 1) {
-                document.addEventListener('mousemove', playheadChange);
+                document.addEventListener('mousemove', scrubb);
                 document.addEventListener('mouseup', function onUp(e) {
                     playheadChange(e);
 
                     document.removeEventListener('mouseup', onUp);
-                    document.removeEventListener('mousemove', playheadChange);
+                    document.removeEventListener('mousemove', scrubb);
                 });
 
-                function playheadChange(e) {
-                    var percent = e.offsetX / self.ui_timelineBar.offsetWidth;
+                function scrubb(e){
+                    pauseEvent(e);
+                    self._isScrubbing = true;
+                    var elLeft = e.clientX - self.ui_timelineBar.getBoundingClientRect().left;
+                    var percent = self._clamp(elLeft / self.ui_timelineBar.offsetWidth, 0, 1);
                     self.audio.currentTime = percent * self.audio.duration;
                     self.ui_timelineHead.style.width = percent * 100 + "%";
+                    return percent;
+                }
+
+                function playheadChange(e) {
+                    var percent = scrubb(e);
+                    self._isScrubbing = false;
+
+                    if(percent >= 0.99){
+                        self.audio.dispatchEvent(new Event('ended'));
+                    }else if(self.audio.paused){
+                        self.audio.play();
+                    }
                 }
             }
         });
@@ -242,7 +274,9 @@ class SpectrumPlayer {
                 });
 
                 function volumeChange(e) {
-                    var percent = e.offsetX / self.ui_volumeBar.offsetWidth;
+                    pauseEvent(e);
+                    var elLeft = e.clientX - self.ui_volumeBar.getBoundingClientRect().left;
+                    var percent = elLeft / self.ui_volumeBar.offsetWidth;
                     self.setVolume(percent);
                 }
             }
@@ -277,6 +311,12 @@ class SpectrumPlayer {
 
         // Register player head to follow the song progress
         this.audio.addEventListener('timeupdate', function() {
+            if(self._isBuffering){
+                self._isBuffering = false;
+                self.buffer(false);
+            }
+
+            
             var length = self.audio.duration;
 
             if (isNaN(length)) return false;
@@ -291,6 +331,9 @@ class SpectrumPlayer {
 
         // Register to play next song when current one is finished
         this.audio.addEventListener('ended', function() {
+            // Abbort if is spuling
+            if(self._isScrubbing) return; 
+
             if (!self.shouldPlayNext) {
                 self.pause();
                 return;
@@ -308,20 +351,29 @@ class SpectrumPlayer {
 
         // Register buffer to update
         this.audio.addEventListener('progress', function bufferUpdate() {
-            var percent = '0%';
-            var buf = self.audio.buffered;
-            try {
-                var bufferedEnd = buf.end(buf.length - 1);
-            } catch (err) {
-                window.setTimeout(bufferUpdate, 200);
-                return false;
-            }
-            var duration = self.audio.duration;
+            var duration =  self.audio.duration;
             if (duration > 0) {
-                percent = ((bufferedEnd / duration) * 100) + "%";
-            }
-            self.ui_timelineBuffer.style.width = percent;
+              for (var i = 0; i < self.audio.buffered.length; i++) {
+                    if (self.audio.buffered.start(self.audio.buffered.length - 1 - i) <= self.audio.currentTime) {
+                        self.ui_timelineBuffer.style.width = (self.audio.buffered.end(self.audio.buffered.length - 1 - i) / duration) * 100 + "%";
+                        break;
+                    }
+                }
+            }            
         });
+
+        this.audio.addEventListener('waiting', function bufferUpdate() {
+            self._isBuffering = true;
+            self.buffer(true);
+         });
+
+        function pauseEvent(e){
+            if(e.stopPropagation) e.stopPropagation();
+            if(e.preventDefault) e.preventDefault();
+            e.cancelBubble=true;
+            e.returnValue=false;
+            return false;
+        }
     }
 
     // Highlight the currently playing song
@@ -354,6 +406,7 @@ class SpectrumPlayer {
             '<div class="bar-back"></div>' +
             '<div class="volume-knob"></div>' +
             '</div>' +
+            '<i class="spinner fas fa-circle-notch fa-spin"></i>' +
             '</div>' +
             '</div>' +
             '<div class="player-timeline">' +
