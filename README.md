@@ -1,8 +1,9 @@
-# Spectrum-Player
+# Spectrum-Player 
+#### Version 1.0.4
 
 Spectrum is a simple HTML5 audio player. It is written in HTML and vanilla JavaScript and therefore fully customizable. Spectrum comes with no default style-sheet, which means that you can either completely style the player as you want or use a pre-made style.
 
-![screenshot_3](https://user-images.githubusercontent.com/7956606/47041765-fd962380-d189-11e8-9077-438473d71f85.png)
+![screenshot_1](https://user-images.githubusercontent.com/7956606/47385654-f1badc00-d70a-11e8-80f6-75962f9036f8.png)
 
 
 
@@ -30,10 +31,10 @@ Spectrum is a simple HTML5 audio player. It is written in HTML and vanilla JavaS
     <ol>
       <li>
         <a class="song-item" 
-	        data-src="[AUDIO_SOURCE]" 
-	        data-artist="[ARTIST_NAME]" 
-	        data-title="[SONG_TITLE]" 
-	        data-img="[ALBUM_ARTWORK]">
+	   data-src="[AUDIO_SOURCE]" 
+	   data-artist="[ARTIST_NAME]" 
+	   data-title="[SONG_TITLE]" 
+	   data-img="[ALBUM_ARTWORK]">
         </a>
       </li>
     </ol>
@@ -60,8 +61,10 @@ Following are the possible attributes:
 
 ## Advanced Usage
 
+### AJAX
 If a spectrum player needs to be initialized after the window has already loaded, the function `initSpectrumPlayers()` can be invoked to initialized all remaining uninitialized players. This can be especially handy, if the spectrum player was loaded asynchronously via AJAX.
 
+### Events
 Spectrum player offers integration for custom JavaScript events:
 
 | Event | Description |
