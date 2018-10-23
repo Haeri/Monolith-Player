@@ -1,81 +1,93 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="UTF-8">
-		<title>Spectrum Player</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
-		<link href="spectrum-player/style.css" rel="stylesheet">
-		<link href="style.css" rel="stylesheet">
-		
-	</head>
-	<body>
+<head>
+    <meta charset="UTF-8">
+    <title>Spectrum Player</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="res/favicon.png">
 
-		<div class="bg-wrapper">
-			<div class="bg"></div>
-			<div class="tint"></div>
-		</div>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <link href="style.css" rel="stylesheet">
+    <link href="spectrum-player/spectrum-chrome.css" rel="stylesheet">
 
-		<div class="spectrum-wrapper">
-			<div class="album-wrapper"></div>
-			<div class="spectrum-player" data-loop-set="true">
-			  <div class="player-body">
-			    <ol>
-			
-			      <li>
-			        <a class="song-item" data-artist="James Blake" data-title="I Need A Forest Fire" data-src="res/Rock Angel.mp3" data-img="res/album/i1.jpg"></a>
-			      </li>
-			
-			      <li>
-			        <a class="song-item" data-title="Accept & Connect" data-artist="kordz" data-src="res/kordz - Accept & Connect (feat. Lontalius).mp3" data-img="res/album/i2.jpg"></a>
-			      </li>
+</head>
 
-			       <li>
-			        <a class="song-item" data-title="Up Above" data-artist="Pyrosion" data-src="res/Up Above.wav" data-img="res/album/i3.jpg"></a>
-			      </li>
+<body>
 
-			       <li>
-			        <a class="song-item" data-title="Deep Blue" data-artist="Pold" data-src="res/Pold - Deep Blue.wav" data-img="res/album/i4.jpg"></a>
-			      </li>
+    <div class="bg-wrapper">
+        <div class="bg"></div>
+        <div class="tint"></div>
+    </div>
 
-			       <li>
-			        <a class="song-item" data-title="Rock Angel" data-artist="Joakim Karud" data-src="res/Rock Angel.mp3" data-img="res/album/i5.jpg"></a>
-			      </li>
-			
-			    </ol>
-			  </div>
-			</div>
-		</div>
+	<div class="nav">
+		<strong>Chrome Theme</strong> for Spectrum Player
+	</div>
 
-		<script src="spectrum-player/spectrum-player.js"></script>
-		<script type="text/javascript">
-			window.addEventListener('load', function() {
-				
-				spectrumPlayers[0].addEventListener('onplay', function(e){
-					document.querySelector('.bg').classList.add('zoom');
-				});
+    <div class="spectrum-player" data-volume="0.75">
+        <div id="spectrum-body">
+            <ol>
 
-				spectrumPlayers[0].addEventListener('onpause', function(e){
-					document.querySelector('.bg').classList.remove('zoom');
-				});
+                <li>
+                    <a class="song-item" data-artist="James Blake" data-title="I Need A Forest Fire" data-src="res/James Blake - I Need A Forest Fire (kordz edit).mp3" data-img="res/album/i1.jpg"></a>
+                </li>
 
-				spectrumPlayers[0].addEventListener('onsongchange', function(e){
-					document.querySelector('.bg').style.backgroundImage = "url('" + e.img +"')";
-					document.querySelector('.album-wrapper').style.backgroundImage = "url('" + e.img +"')";
-				});
+                <li>
+                    <a class="song-item" data-title="Accept & Connect" data-artist="kordz" data-src="res/kordz - Accept & Connect (feat. Lontalius).mp3" data-img="res/album/i2.jpg"></a>
+                </li>
 
-				document.body.onkeyup = function(e){
-					if(e.keyCode == 32){
-						if(spectrumPlayers[0].isPlaying)
-							spectrumPlayers[0].pause();
-						else
-							spectrumPlayers[0].play();
-					}
-				}
+                <li>
+                    <a class="song-item" data-title="Up Above" data-artist="Pyrosion" data-src="res/Up Above.wav" data-img="res/album/i3.jpg"></a>
+                </li>
 
-			});
-		</script>
-	</body>
+                <li>
+                    <a class="song-item" data-title="Deep Blue" data-artist="Pold" data-src="res/Pold - Deep Blue.wav" data-img="res/album/i4.jpg"></a>
+                </li>
+
+                <li>
+                    <a class="song-item" data-title="Awkward Walk" data-artist="Haeri" data-src="res/Awkward Walk.m4a" data-img="res/album/i5.jpg"></a>
+                </li>
+
+                <li>
+                    <a class="song-item" data-title="Before Returning" data-artist="Haeri" data-src="res/Before Returning.m4a" data-img="res/album/i6.jpg"></a>
+                </li>
+
+                <li>
+                    <a class="song-item" data-title="Suspissious" data-artist="Haeri" data-src="res/Suspissious.m4a" data-img="res/album/i6.jpg"></a>
+                </li>
+
+            </ol>
+        </div>
+    </div>
+
+    <script src="spectrum-player/spectrum-player.js"></script>
+    <script type="text/javascript">
+        window.addEventListener('load', function() {
+
+            spectrumPlayers[0].addEventListener('onplay', function(e) {
+                document.querySelector('.bg').classList.add('zoom');
+            });
+
+            spectrumPlayers[0].addEventListener('onpause', function(e) {
+                document.querySelector('.bg').classList.remove('zoom');
+            });
+
+            spectrumPlayers[0].addEventListener('onsongchange', function(e) {
+                document.querySelector('.bg').style.backgroundImage = "url('" + e.img + "')";
+            });
+
+            document.body.onkeyup = function(e) {
+                if (e.keyCode == 32) {
+                    if (spectrumPlayers[0].isPlaying)
+                        spectrumPlayers[0].pause();
+                    else
+                        spectrumPlayers[0].play();
+                }
+            }
+
+        });
+    </script>
+</body>
+
 </html>

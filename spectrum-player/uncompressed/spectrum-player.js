@@ -3,27 +3,33 @@
  ***/
 
 class SpectrumPlayer {
-    constructor(element) {
-        this.version = "1.0.3";
+    constructor(element, customTemplate) {
+        this.version = "1.0.4";
 
         this.player = element;
-        this._createPlayerHTML();
+        this._createPlayerHTML(customTemplate);
 
         // Audio player
-        this.audio = element.querySelector('audio#player-audio');
-        this.source = element.querySelector('source#player-source');
+        this.audio = element.querySelector('audio#spectrum-audio');
+        this.source = element.querySelector('source#spectrum-source');
 
         // UI elements
-        this.ui_timelineBar = element.querySelector('.player-timeline');
-        this.ui_timelineHead = element.querySelector('.player-timeline .playhead');
-        this.ui_timelineBuffer = element.querySelector('.player-timeline .buffer');
-        this.ui_volumeBar = element.querySelector('[data-control="volume"]');
-        this.ui_volumeKnob = element.querySelector('[data-control="volume"] .volume-knob')
-        this.ui_Timer = element.querySelector('.player-timer');
-        this.ui_spinner = element.querySelector('.player-controlls .spinner');
-        this.ui_playPauseBtn = element.querySelector('[data-control="playpause"]');
-        this.ui_nextBtn = element.querySelector('[data-control="next"]');
-        this.ui_muteUnmuteBtn = element.querySelector('[data-control="muteunmute"]');
+        this.ui_timelineBar = element.querySelector('#spectrum-timeline');
+        this.ui_timelineHead = element.querySelector('#spectrum-timeline .spectrum-value');
+        this.ui_body = element.querySelector('#spectrum-body');
+        
+        this.ui_timelineBuffer = element.querySelector('#spectrum-timeline .spectrum-buffer');
+        this.ui_volumeBar = element.querySelector('#spectrum-volume[data-control="volume"]');
+        this.ui_volumeKnob = element.querySelector('#spectrum-volume[data-control="volume"] .spectrum-value')
+        this.ui_time = element.querySelector('#spectrum-time');
+        this.ui_duration = element.querySelector('#spectrum-duration');
+        this.ui_spinner = element.querySelector('#spectrum-buffering');
+        this.ui_art = element.querySelector('#spectrum-art');
+        this.ui_playPauseBtn = element.querySelector('#spectrum-playpause[data-control="playpause"]');
+        this.ui_prevBtn = element.querySelector('#spectrum-prev[data-control="prev"]');
+        this.ui_nextBtn = element.querySelector('#spectrum-next[data-control="next"]');
+        this.ui_muteUnmuteBtn = element.querySelector('#spectrum-muteunmute[data-control="muteunmute"]');
+
         this.ui_currentSong;
 
         // Player variables
@@ -51,7 +57,7 @@ class SpectrumPlayer {
         this._registerAllListeners();
 
         // Ready first song
-        this.playSong(0, false);
+        this.playSong(0, true);
     }
 
 
@@ -63,8 +69,10 @@ class SpectrumPlayer {
     play() {
         this.audio.play();
         this.isPlaying = true;
-        this.ui_playPauseBtn.querySelector('.symbol').classList.add('fa-pause');
-        this.ui_playPauseBtn.querySelector('.symbol').classList.remove('fa-play');
+        this.ui_playPauseBtn.querySelector('.spectrum-icon').classList.add('fa-pause');
+        this.ui_playPauseBtn.querySelector('.spectrum-icon').classList.remove('fa-play');
+        this.playList[this.currentIndex].element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
         document.title = "\u266B" + "  " + this.playList[this.currentIndex].artist + " - " + this.playList[this.currentIndex].title;
 
         this._dispatchEvent("onplay", this.playList[this.currentIndex]);
@@ -72,7 +80,7 @@ class SpectrumPlayer {
 
     // Play a selected song with by index from the playlist,
     // and specify if song should start playing or just queue up
-    playSong(index, shouldPlay = true) {
+    playSong(index, first = false) {
         if (index < 0 || index >= this.playList.length) {
             console.log("Index out of bounds!");
             return;
@@ -92,13 +100,15 @@ class SpectrumPlayer {
         this.audio.volume = this.volume;
         this.audio.muted = this.isMuted;
         this.ui_timelineBuffer.style.width = "0%";
+        this.ui_timelineHead.style.width = "0%";
+        this.ui_art.style.backgroundImage = "url('" +  this.playList[index].img +"')";
 
         this.audio.load();
         this._highlightSong(index);
         this._dispatchEvent("onsongchange", this.playList[this.currentIndex]);
 
 
-        if (shouldPlay) this.play();
+        if (!first) this.play(); 
     }
 
     // Play next song
@@ -108,15 +118,15 @@ class SpectrumPlayer {
 
     // Play previous song
     playPrev() {
-        this.playSong((this.currentIndex - 1) % (this.playList.length));
+        this.playSong(((this.currentIndex - 1) + this.playList.length) % (this.playList.length));
     }
 
     // Pause the current player
     pause() {
         this.audio.pause();
         this.isPlaying = false;
-        this.ui_playPauseBtn.querySelector('.symbol').classList.add('fa-play');
-        this.ui_playPauseBtn.querySelector('.symbol').classList.remove('fa-pause');
+        this.ui_playPauseBtn.querySelector('.spectrum-icon').classList.add('fa-play');
+        this.ui_playPauseBtn.querySelector('.spectrum-icon').classList.remove('fa-pause');
         document.title = originalPageTitle;
 
         this._dispatchEvent("onpause", this.playList[this.currentIndex]);
@@ -126,16 +136,16 @@ class SpectrumPlayer {
     mute() {
         this.audio.muted = true;
         this.isMuted = true;
-        this.ui_muteUnmuteBtn.querySelector('.symbol').classList.add('fa-volume-mute');
-        this.ui_muteUnmuteBtn.querySelector('.symbol').classList.remove('fa-volume-up');
+        this.ui_muteUnmuteBtn.querySelector('.spectrum-icon').classList.add('fa-volume-mute');
+        this.ui_muteUnmuteBtn.querySelector('.spectrum-icon').classList.remove('fa-volume-up');
     }
 
     // Unmute the player
     unmute() {
         this.audio.muted = false;
         this.isMuted = false;
-        this.ui_muteUnmuteBtn.querySelector('.symbol').classList.add('fa-volume-up');
-        this.ui_muteUnmuteBtn.querySelector('.symbol').classList.remove('fa-volume-mute');
+        this.ui_muteUnmuteBtn.querySelector('.spectrum-icon').classList.add('fa-volume-up');
+        this.ui_muteUnmuteBtn.querySelector('.spectrum-icon').classList.remove('fa-volume-mute');
     }
 
     // Set desired volume for the player
@@ -169,14 +179,6 @@ class SpectrumPlayer {
         }
     }
 
-    buffer(shouldBuffer){
-        if(shouldBuffer)
-            this.ui_spinner.classList.add("show");
-        else
-            this.ui_spinner.classList.remove("show");
-    }
-
-
 
     /* ---------------- Private Methods ---------------- */
 
@@ -198,6 +200,14 @@ class SpectrumPlayer {
         this.shouldPlayNext = this._getData(this.player, "playNext", true);
 
         this.setVolume(this.volume);
+    }
+
+    // Activate/Deactivate buffering notification
+    _buffer(shouldBuffer){
+        if(shouldBuffer)
+            this.ui_spinner.classList.add("show");
+        else
+            this.ui_spinner.classList.remove("show");
     }
 
     // Register all listeners to the necessary elements
@@ -243,8 +253,6 @@ class SpectrumPlayer {
 
                     if(percent >= 0.99){
                         self.audio.dispatchEvent(new Event('ended'));
-                    }else if(self.audio.paused){
-                        self.audio.play();
                     }
                 }
             }
@@ -309,24 +317,43 @@ class SpectrumPlayer {
             return false;
         });
 
+        // Register to play previous        
+        this.ui_prevBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            self.playPrev();
+            return false;
+        });
+
+        // Bind Mute event
+        this.audio.addEventListener('volumechange', function(e) {
+            if(self.audio.muted)
+                self.mute()
+            else 
+                self.unmute()
+        });
+
+        // Bind play/pause events
+        this.audio.addEventListener('play', function() { self.play(); });        
+        this.audio.addEventListener('pause', function() { self.pause(); });        
+
         // Register player head to follow the song progress
         this.audio.addEventListener('timeupdate', function() {
             if(self._isBuffering){
                 self._isBuffering = false;
-                self.buffer(false);
+                self._buffer(false);
             }
 
-            
             var length = self.audio.duration;
+            var currentTime = self.audio.currentTime;
 
-            if (isNaN(length)) return false;
+            if (isNaN(length)) return;
 
-            var current_time = self.audio.currentTime;
-            var totalLength = self._calculateTotalValue(length);
-            var currentTime = self._calculateCurrentValue(current_time);
+            var length_ui = self._calculateCurrentValue(length);
+            var currentTime_ui = self._calculateCurrentValue(currentTime);
 
-            self.ui_Timer.innerHTML = currentTime + " / " + totalLength;
-            self.ui_timelineHead.style.width = (current_time / length) * 100 + "%";
+            self.ui_time.innerHTML = currentTime_ui;
+            self.ui_duration.innerHTML = length_ui;
+            self.ui_timelineHead.style.width = (currentTime / length) * 100 + "%";
         });
 
         // Register to play next song when current one is finished
@@ -362,9 +389,10 @@ class SpectrumPlayer {
             }            
         });
 
+        // Register buffer animation
         this.audio.addEventListener('waiting', function bufferUpdate() {
             self._isBuffering = true;
-            self.buffer(true);
+            self._buffer(true);
          });
 
         function pauseEvent(e){
@@ -385,36 +413,48 @@ class SpectrumPlayer {
     }
 
     // Generate the player html
-    _createPlayerHTML() {
-        this.player.insertAdjacentHTML('afterbegin',
-            '<div class="player-header">' +
-            '<audio id="player-audio" class="hidden-audio" preload="none">' +
-            '<source id="player-source"></source>' +
-            '</audio>' +
-            '<div class="player-controlls">' +
-            '<a href="#" class="player-control" data-control="playpause">' +
-            '<i class="symbol fas fa-play"></i>' +
-            '</a>' +
-            '<a href="#" class="player-control" data-control="next">' +
-            '<i class="fas fa-step-forward"></i>' +
-            '</a>' +
-            '<span class="player-timer player-control">00:00 / 00:00</span>' +
-            '<a href="#" class="player-control" data-control="muteunmute">' +
-            '<i class="symbol fas fa-volume-up"></i>' +
-            '</a>' +
-            '<div class="player-control player-volume" data-control="volume">' +
-            '<div class="bar-back"></div>' +
-            '<div class="volume-knob"></div>' +
-            '</div>' +
-            '<i class="spinner fas fa-circle-notch fa-spin"></i>' +
-            '</div>' +
-            '</div>' +
-            '<div class="player-timeline">' +
-            '<div class="bar-back"></div>' +
-            '<div class="buffer"></div>' +
-            '<div class="playhead"></div>' +
-            '</div>'
-        );
+    _createPlayerHTML(custom) {
+        var htmltree =  '<div id="spectrum-art"></div>' +
+                        '<div id="spectrum-header">' +
+                            '<audio id="spectrum-audio" preload="none">' +
+                                '<source id="spectrum-source"></source>' +
+                            '</audio>' +
+                            '<div id="spectrum-controlls">' +
+                                '<a class="spectrum-control" id="spectrum-prev" data-control="prev">' +
+                                    '<i class="spectrum-icon fas fa-step-backward"></i>' +
+                                '</a>' +
+                                '<a class="spectrum-control" id="spectrum-playpause" data-control="playpause">' +
+                                    '<i class="spectrum-icon fas fa-play"></i>' +
+                                '</a>' +
+                                '<a class="spectrum-control" id="spectrum-next" data-control="next">' +
+                                    '<i class="spectrum-icon fas fa-step-forward"></i>' +
+                                '</a>' +
+                                '<span class="spectrum-info" id="spectrum-time">00:00</span>' +
+                                '<span class="spectrum-info" id="spectrum-time-separator"> / </span>' +
+                                '<span class="spectrum-info" id="spectrum-duration">00:00</span>' +
+                                '<a class="spectrum-control" id="spectrum-muteunmute" data-control="muteunmute">' +
+                                    '<i class="spectrum-icon fas fa-volume-up"></i>' +
+                                '</a>' +
+                                '<div class="spectrum-control" id="spectrum-volume" data-control="volume">' +
+                                    '<div class="spectrum-bar-back"></div>' +
+                                    '<div class="spectrum-value"></div>' +
+                                '</div>' +
+                                '<span class="spectrum-info" id="spectrum-buffering">' +
+                                    '<i class="spectrum-icon fas fa-circle-notch fa-spin"></i>' +
+                                '</span>' +
+                            '</div>' +
+                            '<div class="spectrum-control" id="spectrum-timeline" data-control="timeline">' +
+                                '<div class="spectrum-bar-back"></div>' +
+                                '<div class="spectrum-buffer"></div>' +
+                                '<div class="spectrum-value"></div>' +
+                            '</div>'
+                        '</div>';
+                            
+
+        if(custom !== undefined)
+            htmltree = custom;
+
+        this.player.insertAdjacentHTML('afterbegin', htmltree);
     }
 
     // Fill ancker tags with song infos
@@ -426,7 +466,7 @@ class SpectrumPlayer {
 
     // Create the playlist object from the elements in DOM
     _initPlaylist() {
-        var arr = this.player.querySelectorAll('.player-body ol li a');
+        var arr = this.player.querySelectorAll('#spectrum-body ol li a');
         for (var i = 0; i < arr.length; i++) {
             this.playList.push({
                 index: i,
@@ -452,16 +492,7 @@ class SpectrumPlayer {
         return num <= min ? min : num >= max ? max : num;
     }
 
-    _calculateTotalValue(length) {
-        var minutes = Math.floor(length / 60),
-            seconds_int = length - minutes * 60,
-            seconds_str = seconds_int.toString(),
-            seconds = seconds_str.substr(0, 2),
-            time = minutes + ':' + seconds
-
-        return time;
-    }
-
+    // Seconds to two digit display
     _calculateCurrentValue(currentTime) {
         var current_hour = parseInt(currentTime / 3600) % 24,
             current_minute = parseInt(currentTime / 60) % 60,

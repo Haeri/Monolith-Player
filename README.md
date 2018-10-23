@@ -1,6 +1,6 @@
 # Spectrum-Player
 
-Spectrum is a simple HTML5 audio player. It is written in HTML and vanilla JavaScript and therefore fully customizable. 
+Spectrum is a simple HTML5 audio player. It is written in HTML and vanilla JavaScript and therefore fully customizable. Spectrum comes with no default style-sheet, which means that you can either completely style the player as you want or use a pre-made style.
 
 ![screenshot_3](https://user-images.githubusercontent.com/7956606/47041765-fd962380-d189-11e8-9077-438473d71f85.png)
 
@@ -15,25 +15,25 @@ Spectrum is a simple HTML5 audio player. It is written in HTML and vanilla JavaS
 
 ## Usage
 
-1. Include the `style.css` or `style.min.css`into the html header document to style the player.  
-`<link href="style.css" rel="stylesheet">`
-
-2. Include the `spectrum-player.js` or `spectrum-player.min.js`into the html body to make the player functional.  
+1. Include the `spectrum-player.js` or `spectrum-player.min.js` into the html body to make the player functional.  
 `<script src="spectrum-player.js"></script>`
+
+2. Include the style-sheet of your choice. For example the *Chrome* style: `spectrum-chrome.css` or `spectrum-chrome.min.css`into the html header document to style the player.  
+`<link href="spectrum-chrome.css" rel="stylesheet">`
 
 3. Currently [Font-Awesome](https://fontawesome.com/how-to-use/on-the-web/setup/getting-started?using=web-fonts-with-css) is required to display the icons (will be removed later on). 
 
 4. Create the html structure for the player
 ```html
 <div class="spectrum-player">
-  <div class="player-body">
+  <div id="spectrum-body">
     <ol>
       <li>
-        <a 	class="song-item" 
+        <a class="song-item" 
 	        data-src="[AUDIO_SOURCE]" 
 	        data-artist="[ARTIST_NAME]" 
 	        data-title="[SONG_TITLE]" 
-	        data-img="[OPTIONAL_ALBUM_ARTWORK]">
+	        data-img="[ALBUM_ARTWORK]">
         </a>
       </li>
     </ol>
@@ -41,7 +41,6 @@ Spectrum is a simple HTML5 audio player. It is written in HTML and vanilla JavaS
 </div>
 ```
 Make sure to include the `data-src` in the anchor tag of the song so the audio can be loaded. You can add as many `<li>` tags with songs as you wish.
-
 
 
 ## Settings
@@ -79,5 +78,5 @@ Custom functions can be registered by calling for example
 ## TODO
 
 - Use own SVG for icons to eliminate font-awesome
-- Give a possibility to set accent color through data-attribute
 - Audio spectrum?
+- Allow to add custom player-header html

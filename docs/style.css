@@ -9,6 +9,7 @@
 	width: 100vw;
 	height: 100vh;
 	overflow: hidden;
+	z-index: -1;
 }
 
 .tint,
@@ -35,42 +36,17 @@
 }
 
 .tint{
-	background: rgba(0, 0, 0, 0.24);
+	background: rgba(0, 0, 0, 0.32);
 }
 
-.spectrum-wrapper{
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	border-radius: 3px;
-	z-index: 10;
-	display: table;
-}
 
-.album-wrapper{
-	border-radius: 4px 0px 0px 4px;
-	width: 200px;
-	height: 200px;
-	background-color: gray;
-	background-image: url(res/album/i1.jpg);
-    background-size: cover;
-    background-position: center center;
-    transition: 0.4s;
-    display: table-cell;
+.nav{
+	padding: 12px 18px;
+    color: #dbdbdb;
+    font-weight: 100;
+    font-size: 13px;
 }
 
 .spectrum-player{
-	display: table-cell;
-	min-width: 340px;
-}
-
-.spectrum-player .player-header{
-	border-radius: 0px 4px 0px 0px;
-	padding: 14px 24px;
-}
-.spectrum-player .player-body{
-	border-radius: 0px 0px 4px 0px;
-	background-color: rgba(255, 255, 255, 0.75);
-	padding: 12px 20px;
+	box-shadow: 9px 4px 20px #00000061;
 }
