@@ -4,8 +4,8 @@
 
 .bg-wrapper{
 	position: absolute;
-    top: 0;
-    left: 0;
+	top: 0;
+	left: 0;
 	width: 100vw;
 	height: 100vh;
 	overflow: hidden;
@@ -22,31 +22,49 @@
 
 .bg {
 	background-color: gray;
-    background-image: url(res/album/i1.jpg);
-    background-size: cover;
-    background-position: center center;
-    filter: blur(10px);
-    transform: scale(1.1);
-    transition: 1s;
+	background-image: url(res/album/i1.jpg);
+	background-size: cover;
+	background-position: center center;
+	-webkit-filter: blur(10px);
+	        filter: blur(10px);
+	-webkit-transform: scale(1.1);
+	    -ms-transform: scale(1.1);
+	        transform: scale(1.1);
+	-webkit-transition: 1s;
+	-o-transition: 1s;
+	transition: 1s;
 }
 
 .bg.zoom{
-	transform: scale(1.2);
-	filter: blur(15px);
+	-webkit-transform: scale(1.2);
+	    -ms-transform: scale(1.2);
+	        transform: scale(1.2);
+	-webkit-filter: blur(15px);
+	        filter: blur(15px);
 }
 
 .tint{
 	background: rgba(0, 0, 0, 0.32);
 }
 
-
 .nav{
 	padding: 12px 18px;
-    color: #dbdbdb;
-    font-weight: 100;
-    font-size: 13px;
+	color: #dbdbdb;
+	font-weight: 100;
+	font-size: 13px;
 }
 
 .spectrum-player{
-	box-shadow: 9px 4px 20px #00000061;
+	-webkit-box-shadow: 9px 4px 20px #00000061;
+	        box-shadow: 9px 4px 20px #00000061;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+
+#spectrum-art{
+	background-image: url(res/album/i1.jpg);
 }

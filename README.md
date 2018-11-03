@@ -19,7 +19,7 @@ Spectrum is a simple HTML5 audio player. It is written in HTML and vanilla JavaS
 1. Include the `spectrum-player.js` or `spectrum-player.min.js` into the html body to make the player functional.  
 `<script src="spectrum-player.js"></script>`
 
-2. Include the style-sheet of your choice. For example the *Chrome* style: `spectrum-chrome.css` or `spectrum-chrome.min.css`into the html header document to style the player.  
+2. Include the style-sheet of your choice. For example the *Chrome* style: `spectrum-chrome.css` or `spectrum-chrome.min.css` into the html header document to style the player.  
 `<link href="spectrum-chrome.css" rel="stylesheet">`
 
 3. Currently [Font-Awesome](https://fontawesome.com/how-to-use/on-the-web/setup/getting-started?using=web-fonts-with-css) is required to display the icons (will be removed later on). 
@@ -80,6 +80,7 @@ Custom functions can be registered by calling for example
 
 ## TODO
 
+- Random playlist
 - Use own SVG for icons to eliminate font-awesome
-- Audio spectrum?
+- Audio spectrum
 - Allow to add custom player-header html

@@ -4,7 +4,7 @@
 
 class SpectrumPlayer {
     constructor(element, customTemplate) {
-        this.version = "1.0.4";
+        this.version = "1.0.5";
 
         this.player = element;
         this._createPlayerHTML(customTemplate);
@@ -67,12 +67,19 @@ class SpectrumPlayer {
 
     // Play the current player
     play() {
+        if (this.connectedPlayer) {
+            spectrumPlayers.forEach(function(item, index) {
+                if (item.connectedPlayer && item.isPlaying && item != this) {
+                    item.pause();
+                }
+            });
+        }
+
         this.audio.play();
         this.isPlaying = true;
         this.ui_playPauseBtn.querySelector('.spectrum-icon').classList.add('fa-pause');
         this.ui_playPauseBtn.querySelector('.spectrum-icon').classList.remove('fa-play');
-        this.playList[this.currentIndex].element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
+        this.ui_body.scrollTop = this.playList[this.currentIndex].element.offsetTop;
         document.title = "\u266B" + "  " + this.playList[this.currentIndex].artist + " - " + this.playList[this.currentIndex].title;
 
         this._dispatchEvent("onplay", this.playList[this.currentIndex]);
@@ -84,14 +91,6 @@ class SpectrumPlayer {
         if (index < 0 || index >= this.playList.length) {
             console.log("Index out of bounds!");
             return;
-        }
-
-        if (this.connectedPlayer) {
-            spectrumPlayers.forEach(function(item, index) {
-                if (item.connectedPlayer && item.isPlaying && item != this) {
-                    item.pause();
-                }
-            });
         }
 
         this.currentIndex = index;
@@ -333,8 +332,12 @@ class SpectrumPlayer {
         });
 
         // Bind play/pause events
-        this.audio.addEventListener('play', function() { self.play(); });        
-        this.audio.addEventListener('pause', function() { self.pause(); });        
+        this.audio.addEventListener('play', function() { 
+            if (!self.isPlaying) self.play(); 
+        });        
+        this.audio.addEventListener('pause', function() { 
+            if (self.isPlaying) self.pause(); 
+        });        
 
         // Register player head to follow the song progress
         this.audio.addEventListener('timeupdate', function() {
@@ -494,11 +497,11 @@ class SpectrumPlayer {
 
     // Seconds to two digit display
     _calculateCurrentValue(currentTime) {
-        var current_hour = parseInt(currentTime / 3600) % 24,
-            current_minute = parseInt(currentTime / 60) % 60,
-            current_seconds_long = currentTime % 60,
-            current_seconds = current_seconds_long.toFixed(),
-            current_time = (current_minute < 10 ? "0" + current_minute : current_minute) + ":" + (current_seconds < 10 ? "0" + current_seconds : current_seconds);
+        var current_hour = parseInt(currentTime / 3600) % 24;
+        var current_minute = parseInt(currentTime / 60) % 60;
+        var current_seconds_long = currentTime % 60;
+        var current_seconds = current_seconds_long.toFixed();
+        var current_time = (current_minute < 10 ? "0" + current_minute : current_minute) + ":" + (current_seconds < 10 ? "0" + current_seconds : current_seconds);
 
         return current_time;
     }
