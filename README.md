@@ -1,5 +1,5 @@
 # Spectrum-Player 
-#### Version 1.0.5
+#### Version 1.0.6
 
 Spectrum is a simple HTML5 audio player. It is written in HTML and vanilla JavaScript and therefore fully customizable. Spectrum comes with no default style-sheet, which means that you can either completely style the player as you want or use a pre-made style.
 
@@ -31,9 +31,9 @@ Spectrum is a simple HTML5 audio player. It is written in HTML and vanilla JavaS
     <ol>
       <li>
         <a class="song-item" 
-	   data-src="[AUDIO_SOURCE]" 
+	   data-src="[AUDIO_SOURCE*]" 
 	   data-artist="[ARTIST_NAME]" 
-	   data-title="[SONG_TITLE]" 
+	   data-title="[SONG_TITLE*]" 
 	   data-img="[ALBUM_ARTWORK]">
         </a>
       </li>
@@ -41,6 +41,7 @@ Spectrum is a simple HTML5 audio player. It is written in HTML and vanilla JavaS
   </div>
 </div>
 ```
+###### * marked are mandatory
 Make sure to include the `data-src` in the anchor tag of the song so the audio can be loaded. You can add as many `<li>` tags with songs as you wish.
 
 

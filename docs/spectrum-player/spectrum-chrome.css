@@ -114,6 +114,7 @@
      display: block;
      bottom: -5px;
      position: absolute;
+     z-index: 1;
 }
  .spectrum-player #spectrum-timeline, .spectrum-player #spectrum-volume{
      height: 2px;

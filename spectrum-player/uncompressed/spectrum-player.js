@@ -4,7 +4,7 @@
 
 class SpectrumPlayer {
     constructor(element, customTemplate) {
-        this.version = "1.0.5";
+        this.version = "1.0.6";
 
         this.player = element;
         this._createPlayerHTML(customTemplate);
@@ -67,20 +67,25 @@ class SpectrumPlayer {
 
     // Play the current player
     play() {
+        this.isPlaying = true;
         if (this.connectedPlayer) {
+            var self = this;
             spectrumPlayers.forEach(function(item, index) {
-                if (item.connectedPlayer && item.isPlaying && item != this) {
+                if (item.connectedPlayer && item.isPlaying && item != self) {
                     item.pause();
                 }
             });
         }
 
-        this.audio.play();
-        this.isPlaying = true;
+        try{
+            this.audio.play();
+        }catch(err){
+            console.log("ERR:", err);
+        }
         this.ui_playPauseBtn.querySelector('.spectrum-icon').classList.add('fa-pause');
         this.ui_playPauseBtn.querySelector('.spectrum-icon').classList.remove('fa-play');
         this.ui_body.scrollTop = this.playList[this.currentIndex].element.offsetTop;
-        document.title = "\u266B" + "  " + this.playList[this.currentIndex].artist + " - " + this.playList[this.currentIndex].title;
+        document.title = "\u266B" + "  " + this._getSongTitle(this.currentIndex);
 
         this._dispatchEvent("onplay", this.playList[this.currentIndex]);
     }
@@ -100,7 +105,10 @@ class SpectrumPlayer {
         this.audio.muted = this.isMuted;
         this.ui_timelineBuffer.style.width = "0%";
         this.ui_timelineHead.style.width = "0%";
-        this.ui_art.style.backgroundImage = "url('" +  this.playList[index].img +"')";
+        if(this.playList[index].img !== undefined)
+            this.ui_art.style.backgroundImage = "url('" +  this.playList[index].img +"')";
+        else
+            this.ui_art.style.backgroundImage = "none";
 
         this.audio.load();
         this._highlightSong(index);
@@ -122,8 +130,8 @@ class SpectrumPlayer {
 
     // Pause the current player
     pause() {
-        this.audio.pause();
         this.isPlaying = false;
+        this.audio.pause();
         this.ui_playPauseBtn.querySelector('.spectrum-icon').classList.add('fa-play');
         this.ui_playPauseBtn.querySelector('.spectrum-icon').classList.remove('fa-pause');
         document.title = originalPageTitle;
@@ -333,10 +341,14 @@ class SpectrumPlayer {
 
         // Bind play/pause events
         this.audio.addEventListener('play', function() { 
-            if (!self.isPlaying) self.play(); 
+            if (!self.isPlaying) {
+                self.play(); 
+            }
         });        
         this.audio.addEventListener('pause', function() { 
-            if (self.isPlaying) self.pause(); 
+            if (self.isPlaying) {
+                self.pause(); 
+            }
         });        
 
         // Register player head to follow the song progress
@@ -463,7 +475,7 @@ class SpectrumPlayer {
     // Fill ancker tags with song infos
     _createSongTitles() {
         for (var i = 0; i < this.playList.length; i++) {
-            this.playList[i].element.innerHTML = this.playList[i].artist + " - " + this.playList[i].title;
+            this.playList[i].element.innerHTML = this._getSongTitle(i);
         }
     }
 
@@ -480,6 +492,14 @@ class SpectrumPlayer {
                 img: arr[i].dataset.img,
             });
         };
+    }
+
+    // Get song title. Artist + title if artist is set
+    _getSongTitle(index) {
+        if(this.playList[index].artist !== undefined)
+            return this.playList[index].artist + " - " + this.playList[index].title;
+        else
+            return this.playList[index].title;
     }
 
     // Get parsed data attribute from element

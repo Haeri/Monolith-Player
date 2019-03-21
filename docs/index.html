@@ -38,7 +38,7 @@
                 </li>
 
                 <li>
-                    <a class="song-item" data-title="Up Above" data-artist="Pyrosion" data-src="res/Up Above.wav" data-img="res/album/i3.jpg"></a>
+                    <a class="song-item" data-title="Up Above" data-src="res/Up Above.wav"></a>
                 </li>
 
                 <li>
@@ -74,7 +74,10 @@
             });
 
             spectrumPlayers[0].addEventListener('onsongchange', function(e) {
-                document.querySelector('.bg').style.backgroundImage = "url('" + e.img + "')";
+                if(e.img !== undefined)
+                    document.querySelector('.bg').style.backgroundImage = "url('" + e.img + "')";
+                else
+                    document.querySelector('.bg').style.backgroundImage = "none";
             });
 
             document.body.onkeyup = function(e) {
