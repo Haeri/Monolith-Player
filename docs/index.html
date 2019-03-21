@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
     <link href="style.css" rel="stylesheet">
-    <link href="spectrum-player/spectrum-chrome.css" rel="stylesheet">
+    <link id="stylesheet" href="../spectrum-player/uncompressed/spectrum-chrome.css" rel="stylesheet">
 
 </head>
 
@@ -22,7 +22,10 @@
     </div>
 
 	<div class="nav">
-		<strong>Chrome Theme</strong> for Spectrum Player
+		<h4><span id="theme-name">Chrome</span> theme for Spectrum Player</h4>
+        <a href="#" class="theme-changer" data-src="../spectrum-player/uncompressed/spectrum-chrome.css" data-name="Chrome">Chrome</a>
+        <a href="#" class="theme-changer" data-src="../spectrum-player/uncompressed/spectrum-dark-chrome.css" data-name="Dark-Chrome">Dark-Chrome</a>
+
 	</div>
 
     <div class="spectrum-player" data-volume="0.75">
@@ -38,7 +41,7 @@
                 </li>
 
                 <li>
-                    <a class="song-item" data-title="Up Above" data-src="res/Up Above.wav"></a>
+                    <a class="song-item" data-title="Up Above" data-artist="Pyrosion" data-src="res/Up Above.wav" data-img="res/album/i3.jpg"></a>
                 </li>
 
                 <li>
@@ -61,7 +64,7 @@
         </div>
     </div>
 
-    <script src="spectrum-player/spectrum-player.js"></script>
+    <script src="../spectrum-player/uncompressed/spectrum-player.js"></script>
     <script type="text/javascript">
         window.addEventListener('load', function() {
 
@@ -74,10 +77,7 @@
             });
 
             spectrumPlayers[0].addEventListener('onsongchange', function(e) {
-                if(e.img !== undefined)
-                    document.querySelector('.bg').style.backgroundImage = "url('" + e.img + "')";
-                else
-                    document.querySelector('.bg').style.backgroundImage = "none";
+                document.querySelector('.bg').style.backgroundImage = "url('" + e.img + "')";
             });
 
             document.body.onkeyup = function(e) {
@@ -89,6 +89,13 @@
                 }
             }
 
+
+            document.querySelectorAll('.theme-changer').forEach(function(item){
+                item.addEventListener('click', function(e) {
+                    document.getElementById('stylesheet').setAttribute('href', this.getAttribute('data-src'));
+                    document.getElementById('theme-name').innerHTML = this.getAttribute('data-name');
+                }); 
+            });
         });
     </script>
 </body>

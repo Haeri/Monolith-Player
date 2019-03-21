@@ -10,7 +10,7 @@ Spectrum is a simple HTML5 audio player. It is written in HTML and vanilla JavaS
 
 ## Demo
 
-[Demo Page](https://haeri.github.io/Spectrum-Player/)
+[Demo Page](https://haeri.github.io/Spectrum-Player/docs)
 
 
 

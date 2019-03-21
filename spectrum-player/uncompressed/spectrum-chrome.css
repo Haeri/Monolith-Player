@@ -7,8 +7,8 @@
      display: grid;
      -ms-grid-columns: 200px 1fr;
      grid-template-columns: 200px 1fr;
-     -ms-grid-rows: 46px 154px;
-     grid-template-rows: 46px 154px;
+     -ms-grid-rows: 50px 154px;
+     grid-template-rows: 50px 154px;
      overflow: hidden;
 }
  .spectrum-player a{
@@ -44,7 +44,9 @@
  .spectrum-player #spectrum-header #spectrum-controlls{
      margin: 0px 18px;
      min-width: 320px;
-     padding: 6px 0px;
+     height: 100%;
+     display: flex;
+     align-items: center;
 }
  .spectrum-player #spectrum-header #spectrum-controlls .spectrum-control{
      text-align: center;
@@ -70,7 +72,8 @@
      -o-transition: 0.3s;
      transition: 0.3s;
 }
- .spectrum-player #spectrum-header #spectrum-controlls #spectrum-muteunmute:hover + #spectrum-volume, .spectrum-player #spectrum-header #spectrum-volume:hover {
+ .spectrum-player #spectrum-header #spectrum-controlls #spectrum-muteunmute:hover + #spectrum-volume, 
+ .spectrum-player #spectrum-header #spectrum-volume:hover {
      min-width: 55px;
 }
  .spectrum-player #spectrum-header #spectrum-volume .spectrum-value{
@@ -82,7 +85,9 @@
  .spectrum-player #spectrum-header #spectrum-volume:hover .spectrum-value{
      background: #3F5EFB;
 }
- .spectrum-player #spectrum-header #spectrum-controlls #spectrum-time, .spectrum-player #spectrum-header #spectrum-controlls #spectrum-duration, .spectrum-player #spectrum-header #spectrum-controlls #spectrum-time-separator {
+ .spectrum-player #spectrum-header #spectrum-controlls #spectrum-time, 
+ .spectrum-player #spectrum-header #spectrum-controlls #spectrum-duration, 
+ .spectrum-player #spectrum-header #spectrum-controlls #spectrum-time-separator {
      font-size: 12px;
 }
  .spectrum-player #spectrum-header #spectrum-controlls #spectrum-time{
@@ -91,10 +96,15 @@
  .spectrum-player #spectrum-header #spectrum-controlls #spectrum-duration{
      margin-right: 12px;
 }
+ .spectrum-player #spectrum-header #spectrum-controlls #spectrum-time-separator{
+    padding: 0 2px;
+    opacity: 0.7;
+}
  .spectrum-player #spectrum-header #spectrum-controlls #spectrum-buffering{
      color: #c1c1c1;
      padding: 7px 0px;
-     float: right;
+     position: absolute;
+     right: 18px;
      opacity: 0;
      -webkit-transition: 0.3s;
      -o-transition: 0.3s;
@@ -103,21 +113,23 @@
  .spectrum-player #spectrum-header #spectrum-controlls #spectrum-buffering.show{
      opacity: 1;
 }
- .spectrum-player #spectrum-header .spectrum-bar-back, .spectrum-player #spectrum-header .spectrum-value, .spectrum-player #spectrum-header #spectrum-timeline .spectrum-buffer{
+ .spectrum-player #spectrum-header .spectrum-bar-back, 
+ .spectrum-player #spectrum-header .spectrum-value, 
+ .spectrum-player #spectrum-header #spectrum-timeline .spectrum-buffer{
      position: absolute;
-     height: 2px;
+     height: 3px;
      left: 0;
 }
 /* TIMELINE */
  .spectrum-player #spectrum-header #spectrum-timeline{
      width: 100%;
      display: block;
-     bottom: -5px;
+     bottom: -6px;
      position: absolute;
      z-index: 1;
 }
  .spectrum-player #spectrum-timeline, .spectrum-player #spectrum-volume{
-     height: 2px;
+     height: 3px;
      padding: 5px 0px;
      overflow: hidden;
      cursor: pointer;
@@ -154,13 +166,14 @@
      transition: 0.3s;
 }
 /* SLIDER */
- .spectrum-player #spectrum-header #spectrum-timeline .spectrum-value:after, .spectrum-player #spectrum-header #spectrum-volume .spectrum-value:after{
+ .spectrum-player #spectrum-header #spectrum-timeline .spectrum-value:after, 
+ .spectrum-player #spectrum-header #spectrum-volume .spectrum-value:after{
      position: absolute;
      content: "";
      width: 1px;
      background: white;
      right: 0px;
-     top: -2px;
+     top: -1px;
      height: 5px;
      border-radius: 0%;
      -webkit-transition: 0.2s;
@@ -169,11 +182,12 @@
      -webkit-box-shadow: 0px 0px 0px 0px #ffffff9c;
      box-shadow: 0px 0px 0px 0px #ffffff9c;
 }
- .spectrum-player #spectrum-header #spectrum-timeline:hover .spectrum-value:after, .spectrum-player #spectrum-header #spectrum-volume:hover .spectrum-value:after{
+ .spectrum-player #spectrum-header #spectrum-timeline:hover .spectrum-value:after, 
+ .spectrum-player #spectrum-header #spectrum-volume:hover .spectrum-value:after{
      width: 5px;
      height: 5px;
      right: -2px;
-     top: -2px;
+     top: -1px;
      border-radius: 100%;
      -webkit-box-shadow: 0px 0px 4px 1px #ffffff9c;
      box-shadow: 0px 0px 4px 1px #ffffff9c;
@@ -206,7 +220,8 @@
      color: #3F5EFB;
 }
 /* HIDE ELEMENTS */
- .spectrum-player #spectrum-header #spectrum-audio, .spectrum-player #spectrum-header #spectrum-controlls #spectrum-prev {
+ .spectrum-player #spectrum-header #spectrum-audio, 
+ .spectrum-player #spectrum-header #spectrum-controlls #spectrum-prev {
      display: none;
 }
 /* SCROLL BAR */
@@ -228,8 +243,8 @@
      .spectrum-player{
          -ms-grid-columns: 1fr;
          grid-template-columns: 1fr;
-         -ms-grid-rows: 200px 46px 154px;
-         grid-template-rows: 200px 46px 154px;
+         -ms-grid-rows: 200px 50px 154px;
+         grid-template-rows: 200px 50px 154px;
     }
      #spectrum-art{
          -ms-grid-column: 1;

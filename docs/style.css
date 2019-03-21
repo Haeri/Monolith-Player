@@ -54,6 +54,33 @@
 	font-size: 13px;
 }
 
+.nav #theme-name{
+	font-weight: 600;
+}
+
+.nav h4{
+	border-bottom: 1px solid #a0a0a0;
+    padding-bottom: 8px;
+    margin: 0 0 10px 0;
+    display: inline-block;
+    font-weight: 100;
+}
+
+.nav a{
+	text-decoration: none;
+	color: #b3b3b3;
+	display: block;
+	font-size: 10px;
+	margin-bottom: 2px;
+	-webkit-transition: 0.3s;
+	-o-transition: 0.3s;
+	transition: 0.3s;
+}
+
+.nav a:hover{
+	color: white;
+}
+
 .spectrum-player{
 	-webkit-box-shadow: 9px 4px 20px #00000061;
 	        box-shadow: 9px 4px 20px #00000061;
