@@ -1,9 +1,9 @@
 # Spectrum-Player 
-#### Version 1.0.6
+#### Version 1.0.7
 
 Spectrum is a simple HTML5 audio player. It is written in HTML and vanilla JavaScript and therefore fully customizable. Spectrum comes with no default style-sheet, which means that you can either completely style the player as you want or use a pre-made style.
 
-![screenshot_1](https://user-images.githubusercontent.com/7956606/47385654-f1badc00-d70a-11e8-80f6-75962f9036f8.png)
+![screenshot_1](https://user-images.githubusercontent.com/7956606/54828167-e23cc080-4cb3-11e9-9b0f-a25f8011ea05.png)
 
 
 

@@ -4,7 +4,7 @@
 
 class SpectrumPlayer {
     constructor(element, customTemplate) {
-        this.version = "1.0.6";
+        this.version = "1.0.7";
 
         this.player = element;
         this._createPlayerHTML(customTemplate);
@@ -49,6 +49,9 @@ class SpectrumPlayer {
         this._isScrubbing = false;
         this._isBuffering = false;
 
+        // Constants
+        this.ERROR_TITLE = "Spectrum Player Error: ";
+
 
         // Initialize
         this._adoptSettings();
@@ -79,22 +82,24 @@ class SpectrumPlayer {
 
         try{
             this.audio.play();
-        }catch(err){
-            console.log("ERR:", err);
-        }
-        this.ui_playPauseBtn.querySelector('.spectrum-icon').classList.add('fa-pause');
-        this.ui_playPauseBtn.querySelector('.spectrum-icon').classList.remove('fa-play');
-        this.ui_body.scrollTop = this.playList[this.currentIndex].element.offsetTop;
-        document.title = "\u266B" + "  " + this._getSongTitle(this.currentIndex);
+            this.ui_playPauseBtn.querySelector('.spectrum-icon').classList.add('fa-pause');
+            this.ui_playPauseBtn.querySelector('.spectrum-icon').classList.remove('fa-play');
+            this.ui_body.scrollTop = this.playList[this.currentIndex].element.offsetTop;
+            document.title = "\u266B" + "  " + this._getSongTitle(this.currentIndex);
 
-        this._dispatchEvent("onplay", this.playList[this.currentIndex]);
+            this._dispatchEvent("onplay", this.playList[this.currentIndex]);
+        }catch(e){ 
+            this.audio.pause();
+        }
     }
 
     // Play a selected song with by index from the playlist,
     // and specify if song should start playing or just queue up
     playSong(index, first = false) {
+        this.audio.pause();     // This prevents firefox from spasing out
+
         if (index < 0 || index >= this.playList.length) {
-            console.log("Index out of bounds!");
+            console.error(this.ERROR_TITLE, "Index " + index +  " out of bounds!");
             return;
         }
 
@@ -110,12 +115,13 @@ class SpectrumPlayer {
         else
             this.ui_art.style.backgroundImage = "none";
 
-        this.audio.load();
         this._highlightSong(index);
-        this._dispatchEvent("onsongchange", this.playList[this.currentIndex]);
+        try{
+            this.audio.load();
+            this._dispatchEvent("onsongchange", this.playList[this.currentIndex]);
 
-
-        if (!first) this.play(); 
+            if (!first) this.play(); 
+        }catch(e){}
     }
 
     // Play next song
@@ -483,6 +489,12 @@ class SpectrumPlayer {
     _initPlaylist() {
         var arr = this.player.querySelectorAll('#spectrum-body ol li a');
         for (var i = 0; i < arr.length; i++) {
+            if(arr[i].dataset.title === undefined || arr[i].dataset.src === undefined){
+                console.error(this.ERROR_TITLE, "Item at index " + i +  " has missing data attributes (data-title or data-src)\n", arr[i]);
+                arr[i].innerHTML = "-";
+                continue;
+            }
+
             this.playList.push({
                 index: i,
                 element: arr[i],
