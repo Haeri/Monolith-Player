@@ -4,7 +4,7 @@
 
 class SpectrumPlayer {
     constructor(element, customTemplate) {
-        this.version = "1.0.7";
+        this.version = "1.0.8";
 
         this.player = element;
         this._createPlayerHTML(customTemplate);
@@ -273,15 +273,17 @@ class SpectrumPlayer {
 
         // Register mouse scroll volume controll
         this.ui_volumeBar.addEventListener('mouseenter', function(e) {
-            window.onwheel = function(e) {
-                e.preventDefault();
-                var percent = (self.volume + (0.02 * Math.sign(e.deltaY)));
-                self.setVolume(percent);
-            }
+            window.addEventListener('mousewheel', _volumeChange, {passive: false});
         });
         this.ui_volumeBar.addEventListener('mouseleave', function(e) {
-            window.onwheel = null;
+            window.removeEventListener('mousewheel', _volumeChange);
         });
+
+        function _volumeChange(e) {
+            e.preventDefault();
+            var percent = (self.volume + (0.02 * Math.sign(e.deltaY)));
+            self.setVolume(percent);
+        }
 
         // Register mouse click and drag volume controll
         this.ui_volumeBar.addEventListener('mousedown', function(e) {
